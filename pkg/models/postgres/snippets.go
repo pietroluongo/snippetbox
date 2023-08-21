@@ -11,7 +11,30 @@ type SnippetModel struct {
 }
 
 func (m *SnippetModel) Insert(title, content, expires string) (int, error) {
-	return 0, nil
+	stmt := `
+	INSERT INTO snippets (title, content, created, expires)
+	VALUES($1, $2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + ($3 || ' days')::INTERVAL)
+	RETURNING ID;
+	`
+
+	result := m.DB.QueryRow(stmt, title, content, expires)
+
+	if result.Err() != nil {
+		return 0, result.Err()
+	}
+
+	type Id struct {
+		Id int64
+	}
+
+	var id Id
+
+	err := result.Scan(&id)
+	if err != nil {
+		return 0, err
+	}
+
+	return int(id.Id), nil
 }
 
 func (m *SnippetModel) Get(id int) (*models.Snippet, error) {

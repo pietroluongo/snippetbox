@@ -10,3 +10,14 @@ services:
     container_name: lets-go-db
     ports:
       - 5432:5432
+  lets-go-admin:
+    container_name: lets-go-admin
+    depends_on:
+      - lets-go-db
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "5000:80"
