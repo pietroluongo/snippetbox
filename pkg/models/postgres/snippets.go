@@ -23,18 +23,14 @@ func (m *SnippetModel) Insert(title, content, expires string) (int, error) {
 		return 0, result.Err()
 	}
 
-	type Id struct {
-		Id int64
-	}
-
-	var id Id
+	var id int64
 
 	err := result.Scan(&id)
 	if err != nil {
 		return 0, err
 	}
 
-	return int(id.Id), nil
+	return int(id), nil
 }
 
 func (m *SnippetModel) Get(id int) (*models.Snippet, error) {
